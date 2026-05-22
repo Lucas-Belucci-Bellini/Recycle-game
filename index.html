@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Recycle Game</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="stage" id="stage">
+    <div class="sun"></div>
+    <div class="clouds"><div class="cloud c1"></div><div class="cloud c2"></div><div class="cloud c3"></div></div>
+
+    <div class="title-card">
+      <span class="kicker">BASQUETE DA RECICLAGEM 🏀</span>
+      <h1>Joga no Lugar Certo!</h1>
+      <div class="sub">Agora com níveis, desafios e recompensas</div>
+    </div>
+
+    <div class="hud">
+      <div class="chip score">🏀 Pontos: <b id="score">0</b></div>
+      <div class="chip streak">🔥 Sequência: <b id="streak">0</b></div>
+      <div class="chip level">🎯 Nível: <b id="level">1</b></div>
+      <div class="chip reward">🏅 Recompensa: <b id="reward">Bronze</b></div>
+      <div class="chip checkpoint">📍 Checkpoint: <b id="checkpoint">0</b></div>
+      <div class="chip lives">❤️ <span class="hearts" id="hearts">❤️❤️❤️</span></div>
+    </div>
+
+    <div class="challenge" id="challenge"></div>
+    <button class="restart" id="restart">↻ Reiniciar</button>
+
+    <div class="ground"></div>
+    <div class="bins" id="bins"></div>
+
+    <div class="hint" id="hint">Arraste para a lixeira certa!<span class="arrow"></span></div>
+    <div class="item-wrap" id="itemWrap"><div class="item" id="item"></div></div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>
