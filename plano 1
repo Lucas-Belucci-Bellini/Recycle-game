@@ -1,0 +1,249 @@
+1) MDS 01 — Visão do Jogo (Pitch)
+Nome provisório: “EcoPátio: Mestre da Triagem”
+Gênero: Simulação + organização + automação casual
+Loop principal:
+
+Receber lixo misturado
+
+Separar por tipo em lixeiras corretas
+
+Compactar/armazenar em caçambas
+
+Vender/reciclar para ganhar créditos
+
+Comprar lixeiras melhores, caçambas maiores e robôs
+
+Expandir o pátio e repetir com mais complexidade
+
+Fantasia do jogador: transformar um lixão caótico em um centro de reciclagem eficiente e tecnológico.
+
+2) MDS 02 — Core Gameplay (Mecânicas Base)
+Arrastar e soltar itens para a lixeira correta.
+
+Cada item tem:
+
+material (papel, plástico, vidro, metal, orgânico, eletrônico, hospitalar etc.)
+
+volume
+
+risco (normal/perigoso)
+
+valor de reciclagem
+
+Errou a lixeira? perde pontos de qualidade e pode gerar multa ambiental.
+
+Acertou sequência (combo de triagem): bônus de velocidade/ganho.
+
+Caçambas funcionam como “buffers” de armazenamento.
+
+Compactador reduz volume, mas custa energia/manutenção.
+
+3) MDS 03 — Sistema de Lixeiras e Caçambas (Comparação/Upgrade)
+Cada lixeira/caçamba deve ter atributos claros para o jogador comparar:
+
+Capacidade (L)
+
+Velocidade de descarte (itens/s)
+
+Taxa de contaminação (%) (chance de estragar lote)
+
+Durabilidade
+
+Custo de manutenção
+
+Filtro de odor/segurança (impacta satisfação da cidade)
+
+Exemplo de tiers:
+
+Tier 1: simples e barata
+
+Tier 2: capacidade média + sensor básico
+
+Tier 3: compactação embutida
+
+Tier 4: triagem inteligente por IA
+
+Tier 5: industrial/autônoma
+
+4) MDS 04 — Robôs e Automação por Tarefas
+Sistema de “designar tarefa e o robô executa”:
+
+Tipos de robô
+Coletor: pega lixo no pátio e leva para triagem
+
+Triador: identifica material e separa automaticamente
+
+Compactador móvel: comprime lotes em áreas críticas
+
+Logístico: move carga entre lixeira e caçamba
+
+Manutenção: evita quebra de máquinas
+
+Comandos de tarefa
+“Priorizar plástico”
+
+“Esvaziar caçamba 3”
+
+“Rota A-B-C”
+
+“Ignorar orgânico por 2 min”
+
+“Modo emergência (perigoso)”
+
+Progressão de IA do robô
+Nível 1: tarefa única
+
+Nível 2: fila de tarefas
+
+Nível 3: prioridades condicionais
+
+Nível 4: auto-otimização
+
+5) MDS 05 — Economia e Progressão
+Moedas:
+
+Créditos (principal)
+
+EcoPontos (reputação/sustentabilidade)
+
+Peças tecnológicas (upgrades avançados)
+
+Fontes de ganho:
+
+Venda de material reciclável
+
+Contratos municipais
+
+Missões de evento
+
+Bônus de pureza do lote
+
+Custos:
+
+Compra de lixeiras/caçambas
+
+Energia
+
+Reparo
+
+Salário/equipe (se tiver NPCs)
+
+Meta de progressão:
+sair de “lixão manual” para “central inteligente de reciclagem”.
+
+6) MDS 06 — Conteúdo Educativo (Objetivo Pedagógico)
+Cada ação ensina reciclagem real sem ficar “aula chata”.
+
+Codificação por cores oficial de lixeiras (adaptável por país)
+
+Cartas rápidas: “Vidro quebrado vai onde?”
+
+Eventos de erro comum: papel engordurado, pilhas, eletrônicos, óleo
+
+Miniquiz opcional com recompensa
+
+“Modo Escola” com relatório para professor:
+
+taxa de acerto por material
+
+tempo de decisão
+
+evolução do aluno
+
+7) MDS 07 — Níveis, Missões e Dificuldade
+Estrutura de campanha
+Básico: papel/plástico/vidro/metal
+
+Intermediário: orgânico + contaminação
+
+Avançado: eletrônico e resíduos perigosos
+
+Industrial: picos de volume + falhas de máquina
+
+Cidade inteira: gestão multiárea e logística
+
+Tipos de missão
+Meta de pureza > 95%
+
+Processar 2 toneladas em 8 min
+
+Zero erro em resíduos perigosos
+
+Operar com orçamento limitado
+
+8) MDS 08 — UX/UI e Estilo Visual
+Interface clara com ícones grandes por material
+
+Feedback instantâneo:
+
+verde = acerto
+
+vermelho = erro
+
+amarelo = risco de contaminação
+
+Painel de comparação lado a lado para lixeiras/caçambas
+
+Mapa do pátio com fluxo do lixo (heatmap)
+
+Estilo visual:
+
+cartoon técnico (acessível)
+
+ou semi-realista educativo
+
+9) MDS 09 — Tecnologia, Arquitetura e Roadmap
+Plataforma sugerida
+PC + Mobile (Unity ou Godot)
+
+Back-end leve opcional para ranking/escola
+
+Sistemas técnicos
+Banco de dados de itens (JSON/Scriptable Objects)
+
+Sistema de tarefas de robô (behavior tree/GOAP simples)
+
+Balanceamento de economia por planilha
+
+Telemetria:
+
+erro por tipo de lixo
+
+tempo médio de triagem
+
+uso de automação
+
+Roadmap de produção (resumido)
+Pré-produção: 3–4 semanas
+
+Protótipo jogável: 6–8 semanas
+
+Vertical slice: 4 semanas
+
+Conteúdo + polimento: 8–12 semanas
+
+Beta educacional: 4 semanas
+
+10) MDS 10 — Documento de Projeto (GDD) com 10 seções prontas
+Você pode estruturar seu GDD assim:
+
+Visão geral e objetivos
+
+Público-alvo e plataformas
+
+Core loop e mecânicas
+
+Sistema de lixeiras/caçambas
+
+Sistema de robôs e tarefas
+
+Economia e progressão
+
+Conteúdo educativo
+
+Níveis e missões
+
+UI/UX e direção de arte
+
+Plano técnico + cronograma + KPIs
+
