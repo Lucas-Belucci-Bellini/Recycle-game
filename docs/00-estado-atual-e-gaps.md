@@ -3,6 +3,12 @@
 Ponto de partida real do projeto. Tudo nos docs 01–12 deve ser lido como
 "o que construir **a partir** daqui", não do zero.
 
+> **Visão-alvo (ver [doc 01](01-visao-geral.md)):** o jogo mira um híbrido de
+> *tidying satisfatório* (Librarian/Leaf it Alone) com *automação* (Satisfactory):
+> limpar um lixão de 100 mil t para o governo reformar, indo do manual aos robôs.
+> O "arremessar na lixeira certa" de hoje é exatamente a **semente manual** desse
+> loop maior — base correta, escopo a expandir.
+
 ## O que já existe hoje
 
 Arquivo único: **`Jogo da Reciclagem.html`** (~1.130 linhas, HTML + CSS + JS,

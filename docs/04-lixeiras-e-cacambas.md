@@ -21,6 +21,18 @@ capacidade, compra, substituição e comparação.
 - **Fluxo**: lixeira enche → caçamba → compactador → central.
 - Quando o recipiente **satura**, para de receber → pressão para esvaziar/comprar.
 
+## Estações de destino
+Depois de separado, o lixo vai de uma lixeira/caçamba para uma **estação** que o
+processa (ver destinos no [doc 03](03-residuos-e-categorias.md)):
+- **Reciclagem** — transforma em matéria-prima (mais retorno).
+- **Reuso** — recondiciona itens inteiros.
+- **Compostagem** — orgânico vira adubo.
+- **Incinerador (recuperação de energia)** — só para o que não recicla.
+- **Aterro seguro** — rejeito, isolado para não contaminar o solo.
+
+Cada estação tem **capacidade/turno** e **velocidade de processamento**; gargalo
+na estação trava a esteira (fator de planejamento estilo *Satisfactory*).
+
 ## Tiers de estrutura
 | Tier | Lixeira | Caçamba |
 |------|---------|---------|

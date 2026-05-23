@@ -4,6 +4,14 @@ Este `docs/` consolida e organiza as ideias das branches `planos` e
 `codex/elaborate-educational-game-plan` num plano único **para seguir**,
 ancorado no que o jogo já faz hoje (`Jogo da Reciclagem.html`).
 
+**Conceito:** um híbrido de *tidying satisfatório* (Librarian: Tidy Up the
+Arcane Library, Leaf it Alone, Hole Digging Simulator) com *automação*
+(Satisfactory). O governo quer reformar um lixão de **100 mil toneladas**, mas
+**você precisa limpá-lo antes** — separando cada resíduo para reutilizar,
+reciclar, incinerar ou aterrar, do trabalho manual até uma linha com drones e
+robôs, sem contaminar o solo. Aprende-se **na prática (e na frustração)** das 7
+cores misturadas.
+
 A ideia é simples: ler na ordem, do 00 ao 12, e ter em mãos um Game Design
 Document (GDD) completo + roadmap de produção + backlog inicial.
 
@@ -37,14 +45,17 @@ Document (GDD) completo + roadmap de produção + backlog inicial.
 Pontos que dependem de você decidir (estão marcados como `D-0x` ao longo dos docs):
 
 - **D-01 — Nome do jogo.** Hoje o título de trabalho é **"Jogo da Reciclagem"**.
-  Candidatos de marca surgidos nas branches: *EcoPátio: Mestre da Triagem*,
-  *Eco Tycoon: Lixão Inteligente*, *EcoSort* e *Lixão Arcano: Operação Recicla+*.
-  Recomendação: manter **Jogo da Reciclagem** como título e adotar **EcoPátio**
-  como marca/subtítulo. Decisão sua.
+  Candidatos de marca: *EcoPátio: Mestre da Triagem*, *Lixão Zero*,
+  *Operação Recicla+*. Decisão sua.
 - **D-02 — Escopo do MVP.** Ver [11 — Roadmap](11-roadmap-e-mds.md). Sugestão:
-  4 categorias, 1 modo, loja simples e 1 robô.
+  4 categorias, 1 setor, loja simples e 1 robô/esteira.
 - **D-03 — Plataforma alvo.** O jogo já roda como Web (HTML único). Ver
   [10 — Técnico](10-tecnico-e-arquitetura.md) antes de cogitar Unity/Godot.
+- **D-04 — Papel da incineração ("cremar").** Recomendação: incinerar é mecânica
+  divertida, mas **paga menos** que reutilizar/reciclar (senão o jogo ensina o
+  errado). Ver [03 — Hierarquia do lixo](03-residuos-e-categorias.md).
+- **D-05 — As 7 cores núcleo.** Sugestão: azul, vermelho, verde, amarelo, marrom,
+  cinza, laranja (preto/branco como avançadas). Ver [doc 03](03-residuos-e-categorias.md).
 
 ## Origem do conteúdo
 

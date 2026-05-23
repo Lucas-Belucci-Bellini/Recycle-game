@@ -13,10 +13,14 @@ Backlog acionável para **começar já**, a partir do HTML atual. Prioridades:
 - **P0** Como jogador, ganho **créditos** ao acertar a triagem.
 - **P0** Como jogador, **perco** créditos/pontos ao errar.
 - **P0** Como jogador, abro uma **loja** e compro upgrades.
+- **P1** Como jogador, ganho **mais** por reutilizar/reciclar do que por
+  incinerar/aterrar (hierarquia do lixo — D-04).
 - **P1** Como jogador, recebo **missões diárias** ("recicle 50 plásticos").
 
-## Épico C — Lixeiras, caçambas e capacidade
+## Épico C — Lixeiras, caçambas e destinos
 - **P0** Como jogador, vejo a **capacidade** de cada lixeira encher.
+- **P0** Como jogador, **roteio** o lote separado para o **destino** certo
+  (reciclar / compostar / incinerar / aterro).
 - **P0** Como jogador, **comparo** 2–3 recipientes lado a lado antes de comprar.
 - **P1** Como jogador, compro **caçambas** como buffer e as esvazio.
 - **P2** Como jogador, uso **compactador** para reduzir volume.
@@ -32,11 +36,13 @@ Backlog acionável para **começar já**, a partir do HTML atual. Prioridades:
 - **P1** Adicionar itens **dúbios** (exigem inspeção).
 - **P2** Itens **compostos** com pré-triagem (tetrapak, garrafa+tampa).
 
-## Épico F — Robôs e automação
-- **P1** Como jogador, compro um **robô coletor**.
-- **P1** Como jogador, **designo uma tarefa** a um robô ("priorizar plástico").
-- **P2** Como jogador, dou **upgrade** nos robôs (velocidade, precisão, bateria).
-- **P2** Árvore de tecnologia/pesquisa.
+## Épico F — Automação (esteiras, drones, robôs)
+- **P1** Como jogador, instalo uma **esteira** que leva o lixo até a estação.
+- **P1** Como jogador, instalo um **separador automático** que classifica por cor.
+- **P1** Como jogador, compro um **robô coletor** e **designo tarefas** ("priorizar plástico").
+- **P2** Como jogador, uso um **drone batedor** para revelar lixo enterrado.
+- **P2** Como jogador, dou **upgrade** em robôs/drones (velocidade, precisão, bateria).
+- **P2** Árvore de tecnologia/pesquisa de automação.
 
 ## Épico G — Progressão, modos e fases
 - **P0** Como jogador, avanço por **fases** com metas (não só rodada única).
@@ -54,7 +60,7 @@ Backlog acionável para **começar já**, a partir do HTML atual. Prioridades:
 1. Refatorar HTML em módulos (Épico A).
 2. SaveSystem com LocalStorage (Épico A).
 3. Créditos + loja + 1 upgrade real (Épico B).
-4. Capacidade de lixeira + comparação (Épico C).
+4. Capacidade de lixeira + roteamento de destino + comparação (Épico C).
 5. Tooltip educativo por item (Épico D).
 6. Fases com metas + tela de fim (Épico G).
 

@@ -1,7 +1,10 @@
 # Jogo da Reciclagem
 
-Jogo educativo de separação de resíduos: o jogador recebe lixo misturado e o
-descarta na lixeira correta, aprendendo reciclagem de verdade enquanto joga.
+Jogo educativo que cruza *tidying satisfatório* (estilo Librarian: Tidy Up the
+Arcane Library) com *automação* (estilo Satisfactory): o governo quer reformar um
+lixão de 100 mil toneladas, mas você precisa limpá-lo antes — separando cada
+resíduo para o destino certo, do trabalho manual até drones e robôs, e aprendendo
+reciclagem de verdade na prática.
 
 O protótipo jogável está em **`Jogo da Reciclagem.html`** (HTML único, abre
 direto no navegador, sem instalação).

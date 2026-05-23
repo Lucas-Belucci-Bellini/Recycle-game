@@ -1,46 +1,62 @@
 # 02 — Core Loop e Gameplay
 
-## Core loop principal
-1. Chega uma **onda de lixo misturado** (esteira/pilha).
-2. Jogador **coleta e arrasta/arremessa** cada item para a lixeira/caçamba correta.
-3. Sistema **valida** a separação (acerto, erro, contaminação).
-4. Jogador ganha **moedas, EcoPontos e reputação**.
-5. **Compra** novas lixeiras/caçambas e upgrades.
-6. **Contrata/melhora robôs** para automatizar tarefas.
-7. Volume e complexidade dos resíduos **aumentam** → repete com mais desafio.
+## A sensação central
+Olhar uma montanha de lixo misturado e, peça por peça (depois esteira por
+esteira), transformá-la em **terreno limpo**. O caos incomoda; resolver o caos
+satisfaz. É o loop de *Librarian/Leaf it Alone/PowerWash* aplicado a um lixão,
+com a escalada de automação de *Satisfactory*.
 
-> Estado atual: passos 1–3 já existem no HTML (arremesso + acerto/erro/combo).
-> O resto é o que este GDD detalha. Ver [doc 00](00-estado-atual-e-gaps.md).
+## Loop emocional (o "porquê vicia")
+1. **Frustração**: pilha enorme, 7 cores misturadas, nada no lugar.
+2. **Ação**: separar, rotear, limpar.
+3. **Alívio/satisfação**: a área esvazia, o solo aparece, o governo reforma.
+4. **Ambição**: "se eu tivesse um robô pra isso..." → automação → setor maior.
 
-## Loop de 60 segundos (micro)
-- **0–15s**: chegada de resíduos.
-- **15–35s**: identificação visual + coleta.
-- **35–50s**: depósito correto e compactação.
+> É aqui que mora a lição (doc 08): a frustração do lixo misturado ensina, na
+> pele, por que separar **na fonte** evita esse caos.
+
+## Macro loop (a campanha)
+1. Receber um **setor do lixão** entupido de resíduos.
+2. **Escavar/coletar** o lixo da pilha.
+3. **Identificar e separar** por tipo (as 7 cores — ver [doc 03](03-residuos-e-categorias.md)).
+4. **Rotear para o destino certo**: reutilização, reciclagem, incineração
+   (recuperação de energia) ou aterro seguro.
+5. Ganhar **créditos, EcoPontos e reputação** (mais por reutilizar/reciclar; menos por incinerar/aterrar).
+6. **Reinvestir** em estruturas e **automação** (esteiras, separadores, drones, robôs).
+7. **Setor limpo → governo reforma a área** → desbloqueia o próximo setor maior.
+
+## Micro loop (sessão de ~60s, fase manual)
+- **0–15s**: chega/expõe-se uma leva de resíduos.
+- **15–35s**: identificação visual + coleta (arrastar/arremessar — já existe).
+- **35–50s**: roteamento para o destino correto + compactação.
 - **50–60s**: feedback, pontuação e bônus de combo.
 
 ## Mecânicas centrais
-- **Arrastar/arremessar** item e soltar no destino correto (já implementado).
-- Cada item tem: **material**, **volume**, **risco** (normal/perigoso) e
-  **valor de reciclagem** (ver [doc 03](03-residuos-e-categorias.md)).
-- Lixeiras com **capacidade** e **taxa de processamento**; caçambas como **buffer**.
-- **Penalidade** por descarte incorreto (perde qualidade do lote, pode gerar multa).
-- **Combo**: sequência de acertos dá bônus de velocidade/ganho (já implementado).
-- **Compactador** reduz volume, mas custa energia/manutenção.
+- **Manual primeiro** (estado atual): arrastar/arremessar item ao destino correto.
+- **Automação depois** (Satisfactory): esteiras levam o lixo, separadores
+  classificam, drones coletam, robôs operam — reduzindo o trabalho manual.
+- Cada item tem **material, volume, risco e valor** (ver [doc 03](03-residuos-e-categorias.md)).
+- **Penalidade** por destino errado (contamina lote, multa, atrasa a limpeza).
+- **Combo** por sequência de acertos → bônus (já implementado).
+- **Capacidade**: lixeiras/caçambas enchem e precisam ser escoadas (ver [doc 04](04-lixeiras-e-cacambas.md)).
 
-## Ritmo de partida (10–15 min)
-- **Início**: poucos tipos de lixo, itens grandes e fáceis.
-- **Meio**: surgem materiais compostos (tetrapak, eletrônicos) e itens "dúbios".
-- **Fim**: pico de volume + eventos (chuva, vazamento, lote hospitalar urgente).
+## Ritmo (do manual ao industrial)
+- **Início**: poucos tipos, tudo na mão, pilhas pequenas.
+- **Meio**: materiais compostos e "dúbios"; primeiras esteiras e drones.
+- **Fim**: picos de volume, resíduos perigosos/e-lixo, linha quase autônoma.
 
-## Condições de vitória/derrota
-- **Vitória**: meta de triagem atingida com contaminação abaixo do limite.
-- **Derrota**: contaminação acima do limite **ou** acúmulo crítico de lixo no chão.
-- **Estrelas (1–3)**: por eficiência (já existe a base de `stars` no código).
+## Condições de progresso
+- **Avança** quando o setor atinge a meta de limpeza com contaminação do solo
+  abaixo do limite → o governo reforma a área.
+- **Trava/regride** se a contaminação do solo passa do limite ou o lixo
+  transborda (acúmulo crítico).
+- **Estrelas (1–3)** por eficiência: % reciclado/reutilizado vs. incinerado/aterrado,
+  tempo e pureza dos lotes (base de `stars` já existe no código).
 
 ## Meta-jogo
-- Desbloqueio de **zonas** (pátio → triagem fina → compostagem).
-- **Árvore de upgrades** (infraestrutura + operação + automação + educação).
-- Coleção de **cartas educativas** sobre materiais.
+- Desbloqueio de **setores** e de **estações de destino** (reciclagem, compostagem, incinerador).
+- **Árvore de automação** (esteiras → separadores → drones → robôs → IA).
+- Coleção de **cartas educativas** sobre materiais e destinos.
 
 ---
 [↑ Índice](README.md) · anterior: [« 01](01-visao-geral.md) · próximo: [03 »](03-residuos-e-categorias.md)

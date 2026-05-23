@@ -41,11 +41,11 @@ Cada MDS tem **objetivo**, **entregas** e **critério de pronto (DoD)**.
   regras de contaminação que mudam categoria.
 - **DoD**: pelo menos 8 categorias e 20+ itens jogáveis.
 
-## MDS 7 — Robôs assistentes
-- **Objetivo**: automação com estratégia.
-- **Entregas**: robô coletor + triador + transportador; painel de designar tarefa;
-  IA por fila/prioridade (nível 1–2).
-- **DoD**: jogador delega e aumenta a eficiência real.
+## MDS 7 — Esteiras, drones e robôs (automação)
+- **Objetivo**: tirar o jogador do 100% manual (pilar *Satisfactory*).
+- **Entregas**: 1ª esteira + separador automático; robô coletor/triador;
+  drone batedor; painel de designar tarefa; IA por fila/prioridade (nível 1–2).
+- **DoD**: jogador monta uma mini-linha e vê a eficiência subir sozinha.
 
 ## MDS 8 — Upgrades de robôs + árvore de tecnologia
 - **Objetivo**: profundidade de meta-jogo.
@@ -55,8 +55,8 @@ Cada MDS tem **objetivo**, **entregas** e **critério de pronto (DoD)**.
 
 ## MDS 9 — Mapas, dificuldade e eventos dinâmicos
 - **Objetivo**: variar desafio e rejogabilidade.
-- **Entregas**: 3 mapas/biomas; clima/eventos; modos (campanha, infinito, cronometrado);
-  boss "Mega Montanha de Lixo".
+- **Entregas**: 3+ setores do lixão (variação visual); clima/eventos (chorume,
+  picos); modos (campanha, infinito, cronometrado); boss "Mega Montanha de Lixo".
 - **DoD**: 30–60 min de conteúdo sem repetição cansativa.
 
 ## MDS 10 — Polimento, QA, métricas e lançamento
@@ -71,9 +71,10 @@ Cada MDS tem **objetivo**, **entregas** e **critério de pronto (DoD)**.
 ## MVP (8–10 semanas) — D-02
 Para lançar rápido, foque em:
 - 4 categorias (papel, plástico, vidro, orgânico) — **já no jogo**.
-- 3 níveis/fases.
-- 3 recipientes (lixeira comum, seletiva, caçamba).
-- 2 robôs.
+- 1 setor com 3 fases (limpar → governo reforma a área).
+- 3 destinos jogáveis (reciclar, compostar, aterro).
+- 3 recipientes (lixeira comum, seletiva, caçamba) + 1 esteira/separador.
+- 1 robô coletor.
 - Pontuação + loja de upgrades + persistência.
 - Tutorial + 1 modo infinito.
 
