@@ -66,6 +66,7 @@
   }
   .chip .icon { font-size: 22px; }
   .chip.score { background: #fff3a0; }
+  .chip.credits { background: #d6f5d0; }
   .chip.streak { background: #ffd2e8; }
   .chip.lives { background: #d2eaff; }
   .hearts { letter-spacing: 2px; font-size: 18px; }
@@ -403,7 +404,7 @@
   .feedback .word.bad  { color: #ffd2d2; }
   .feedback .sub {
     margin-top: 8px;
-    font-size: 18px;
+    font-size: 17px;
     color: var(--ink);
     background: #fff;
     border: 3px solid var(--ink);
@@ -412,6 +413,9 @@
     box-shadow: 0 4px 0 var(--ink);
     animation: fadeUp 1.1s ease forwards;
     text-align: center;
+    max-width: 360px;
+    margin-left: auto;
+    margin-right: auto;
   }
   @keyframes pop {
     0%   { transform: scale(0.3) rotate(-10deg); opacity: 0; }
@@ -514,6 +518,19 @@
   }
   .modal button:hover { transform: translateY(-2px); }
   .modal button:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--ink); }
+
+  .modal .report {
+    text-align: left;
+    background: #f7f3e8;
+    border: 2px solid var(--ink);
+    border-radius: 12px;
+    padding: 10px 14px;
+    margin: 0 0 18px;
+    font-size: 15px;
+  }
+  .modal .report-title { font-weight: 900; margin-bottom: 6px; text-align: center; }
+  .modal .report .row { display: flex; justify-content: space-between; padding: 2px 0; }
+  .modal .report .row small { color: var(--ink-soft); font-weight: 700; }
 </style>
 </head>
 <body>
@@ -536,6 +553,7 @@
 
   <div class="hud">
     <div class="chip score"><span class="icon">🏀</span><span>Pontos: <b id="score">0</b></span></div>
+    <div class="chip credits"><span class="icon">♻️</span><span>Créditos: <b id="credits">0</b></span></div>
     <div class="chip streak"><span class="icon">🔥</span><span>Sequência: <b id="streak">0</b></span></div>
     <div class="chip lives"><span class="icon">❤️</span><span class="hearts" id="hearts">❤️❤️❤️</span></div>
   </div>
@@ -567,13 +585,13 @@ const BINS = [
 ];
 
 const ITEMS = [
-  { id: 'paper-ball', name: 'Bola de papel',    correct: 'azul',     svg: paperBallSVG()   },
-  { id: 'bottle',     name: 'Garrafa PET',      correct: 'vermelho', svg: bottleSVG()      },
-  { id: 'jar',        name: 'Pote de vidro',    correct: 'verde',    svg: jarSVG()         },
-  { id: 'can',        name: 'Lata de alumínio', correct: 'amarelo',  svg: canSVG()         },
-  { id: 'banana',     name: 'Casca de banana',  correct: 'marrom',   svg: bananaSVG()      },
-  { id: 'newspaper',  name: 'Jornal',           correct: 'azul',     svg: newspaperSVG()   },
-  { id: 'cup',        name: 'Copo plástico',    correct: 'vermelho', svg: cupSVG()         },
+  { id: 'paper-ball', name: 'Bola de papel',    correct: 'azul',     svg: paperBallSVG(),  tip: 'Papel limpo é reciclável e vai na lixeira azul.' },
+  { id: 'bottle',     name: 'Garrafa PET',      correct: 'vermelho', svg: bottleSVG(),     tip: 'Garrafas PET são plástico: lixeira vermelha.' },
+  { id: 'jar',        name: 'Pote de vidro',    correct: 'verde',    svg: jarSVG(),        tip: 'Vidro vai na lixeira verde (cuidado se quebrar!).' },
+  { id: 'can',        name: 'Lata de alumínio', correct: 'amarelo',  svg: canSVG(),        tip: 'Latas de alumínio são metal: lixeira amarela.' },
+  { id: 'banana',     name: 'Casca de banana',  correct: 'marrom',   svg: bananaSVG(),     tip: 'Restos de comida são orgânicos: lixeira marrom (viram adubo!).' },
+  { id: 'newspaper',  name: 'Jornal',           correct: 'azul',     svg: newspaperSVG(),  tip: 'Jornal é papel: lixeira azul.' },
+  { id: 'cup',        name: 'Copo plástico',    correct: 'vermelho', svg: cupSVG(),        tip: 'Copos plásticos vão na lixeira vermelha.' },
 ];
 
 /* ============================================================
@@ -838,6 +856,7 @@ const $item = document.getElementById('item');
 const $itemWrap = document.getElementById('itemWrap');
 const $hint = document.getElementById('hint');
 const $score = document.getElementById('score');
+const $credits = document.getElementById('credits');
 const $streak = document.getElementById('streak');
 const $hearts = document.getElementById('hearts');
 const $restart = document.getElementById('restart');
@@ -847,6 +866,10 @@ let state = {
   streak: 0,
   best: 0,
   lives: 3,
+  credits: 0,
+  highScore: 0,
+  runCredits: 0,
+  stats: {},
   current: null,
   queue: [],
   dragging: false,
@@ -855,6 +878,29 @@ let state = {
   itemX: 0, itemY: 0,
   hintShown: true,
 };
+
+/* ===== Save / persistência (LocalStorage) ===== */
+const SAVE_KEY = 'jogo-reciclagem-save-v1';
+function loadSave() {
+  let data = {};
+  try { data = JSON.parse(localStorage.getItem(SAVE_KEY)) || {}; } catch (e) {}
+  state.credits   = data.credits   || 0;
+  state.highScore = data.highScore || 0;
+  state.stats     = data.stats     || {};
+}
+function persist() {
+  try {
+    localStorage.setItem(SAVE_KEY, JSON.stringify({
+      credits: state.credits,
+      highScore: state.highScore,
+      stats: state.stats,
+    }));
+  } catch (e) {}
+}
+function recordResult(catId, ok) {
+  if (!state.stats[catId]) state.stats[catId] = { ok: 0, err: 0 };
+  state.stats[catId][ok ? 'ok' : 'err'] += 1;
+}
 
 function renderBins() {
   $bins.innerHTML = '';
@@ -899,6 +945,7 @@ function nextItem() {
 
 function setHUD() {
   $score.textContent = state.score;
+  $credits.textContent = state.credits;
   $streak.textContent = state.streak;
   let hearts = '';
   for (let i = 0; i < 3; i++) {
@@ -991,8 +1038,10 @@ function returnItem() {
 /* ===== Drop logic ===== */
 function handleDrop(binEl) {
   const binId = binEl.dataset.id;
-  const bin = BINS.find(b => b.id === binId);
-  const isCorrect = binId === state.current.correct;
+  const item = state.current;
+  const isCorrect = binId === item.correct;
+  const correctBin = BINS.find(b => b.id === item.correct);
+  recordResult(item.correct, isCorrect);
 
   if (isCorrect) {
     // Arc the item into the hoop
@@ -1007,15 +1056,20 @@ function handleDrop(binEl) {
     setTimeout(() => binEl.classList.add('correct'), 450);
 
     const points = 10 + state.streak * 2;
+    const earned = 2 + Math.floor(state.streak / 3);
     state.score += points;
     state.streak += 1;
     state.best = Math.max(state.best, state.streak);
+    state.credits += earned;
+    state.runCredits += earned;
+    state.highScore = Math.max(state.highScore, state.score);
+    persist();
     setHUD();
 
     setTimeout(() => {
       const swishWords = ['CESTA!', 'SWISH!', 'NA RECICLAGEM!', 'PERFEITO!', '3 PONTOS!'];
       const w = state.streak >= 3 ? '3 PONTOS!' : swishWords[Math.floor(Math.random() * swishWords.length)];
-      showFeedback(w, `${state.current.name} vai na lata ${bin.ptColor}!`, true, binEl);
+      showFeedback(w, item.tip, true, binEl);
       showPoints(binEl, '+' + points);
       confettiBurst(binEl);
     }, 480);
@@ -1031,8 +1085,8 @@ function handleDrop(binEl) {
     binEl.classList.add('wrong');
     state.streak = 0;
     state.lives -= 1;
-    const correctBin = BINS.find(b => b.id === state.current.correct);
-    showFeedback('OPA!', `${state.current.name} vai na lata ${correctBin.ptColor} (${correctBin.name})`, false, binEl);
+    persist();
+    showFeedback('OPA!', `Vai na lata ${correctBin.ptColor} (${correctBin.name}). ${item.tip}`, false, binEl);
     setHUD();
     setTimeout(() => binEl.classList.remove('wrong'), 600);
     if (state.lives <= 0) {
@@ -1085,6 +1139,18 @@ function confettiBurst(binEl) {
 }
 
 /* ===== Game over ===== */
+function reportHTML() {
+  const rows = BINS.map(b => {
+    const s = state.stats[b.id];
+    const total = s ? s.ok + s.err : 0;
+    if (total === 0) return '';
+    const pct = Math.round((s.ok / total) * 100);
+    return `<div class="row"><span>${b.name}</span><span>${pct}% <small>(${s.ok}/${total})</small></span></div>`;
+  }).filter(Boolean).join('');
+  if (!rows) return '';
+  return `<div class="report"><div class="report-title">Seu aprendizado por tipo</div>${rows}</div>`;
+}
+
 function gameOver() {
   const modal = document.createElement('div');
   modal.className = 'modal';
@@ -1094,7 +1160,9 @@ function gameOver() {
       <h2>Fim de jogo!</h2>
       <div class="big-score">${state.score}</div>
       <div class="stars">${stars}</div>
-      <p>Sua melhor sequência foi <b>${state.best}</b> acertos.<br/>Quer tentar de novo?</p>
+      <p>Recorde: <b>${state.highScore}</b> · Melhor sequência: <b>${state.best}</b><br/>
+         Créditos ganhos: <b>+${state.runCredits} ♻️</b> (total ${state.credits})</p>
+      ${reportHTML()}
       <button id="playAgain">JOGAR DE NOVO</button>
     </div>`;
   $stage.appendChild(modal);
@@ -1109,6 +1177,7 @@ function resetGame() {
   state.streak = 0;
   state.lives = 3;
   state.best = 0;
+  state.runCredits = 0;
   state.hintShown = true;
   setHUD();
   shuffleQueue();
@@ -1125,6 +1194,7 @@ window.addEventListener('touchend', pointerUp);
 $restart.addEventListener('click', resetGame);
 
 /* ===== Init ===== */
+loadSave();
 renderBins();
 shuffleQueue();
 nextItem();
