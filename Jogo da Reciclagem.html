@@ -28,6 +28,8 @@
     --marrom-d: #4a2d18;
     --cinza: #8a8f96;
     --cinza-d: #5b6168;
+    --laranja: #e8761b;
+    --laranja-d: #b4540c;
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; height: 100%; }
@@ -210,15 +212,17 @@
     left: 0;
     right: 0;
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
     align-items: flex-end;
-    gap: clamp(8px, 2.2vw, 36px);
-    padding: 0 16px;
+    gap: clamp(8px, 1.8vw, 28px);
+    row-gap: 6px;
+    padding: 0 14px;
     z-index: 3;
   }
   .bin {
     position: relative;
-    width: clamp(86px, 13vw, 170px);
+    width: clamp(76px, 12vw, 146px);
     cursor: default;
     transition: transform 0.18s ease;
   }
@@ -630,7 +634,7 @@
   <div class="dest-panel" id="destPanel" aria-hidden="true">
     <div class="dest-title" id="destTitle">Pra onde vai?</div>
     <div class="dest-options" id="destOptions"></div>
-    <div class="dest-legend">Melhor → pior: 🔄 Reutilizar › ♻️ Reciclar / 🌱 Compostar › 🔥 Incinerar › ⛰️ Aterro</div>
+    <div class="dest-legend">Melhor → pior: 🔄 Reutilizar › ♻️ Reciclar / 🌱 Compostar › 🔥 Incinerar › ⛰️ Aterro · ↩️ Devolver = perigosos</div>
   </div>
 </div>
 
@@ -645,6 +649,7 @@ const BINS = [
   { id: 'amarelo',  name: 'Metal',     ptColor: 'AMARELA',  color: 'var(--amarelo)',  dark: 'var(--amarelo-d)' },
   { id: 'marrom',   name: 'Orgânico',  ptColor: 'MARROM',   color: 'var(--marrom)',   dark: 'var(--marrom-d)' },
   { id: 'cinza',    name: 'Rejeito',   ptColor: 'CINZA',    color: 'var(--cinza)',    dark: 'var(--cinza-d)',   symbol: 'rejeito' },
+  { id: 'laranja',  name: 'Perigoso',  ptColor: 'LARANJA',  color: 'var(--laranja)',  dark: 'var(--laranja-d)', symbol: 'perigoso' },
 ];
 
 // Destinos, ordenados pela hierarquia do lixo (D-04): reutilizar > reciclar/compostar > incinerar > aterro.
@@ -656,6 +661,8 @@ const DESTINOS = {
   compostar:  { name: 'Compostar',  icon: '🌱', color: '#7a9a2e', credits: 4, eco: 4, tip: 'Orgânico vira adubo para a terra.' },
   incinerar:  { name: 'Incinerar',  icon: '🔥', color: '#e8842a', credits: 2, eco: 0, tip: 'Só recupera energia e desperdiça o material. Último recurso.' },
   aterro:     { name: 'Aterro',     icon: '⛰️', color: '#8a8a8a', credits: 1, eco: 0, tip: 'Ocupa terreno e não aproveita nada. Evite ao máximo.' },
+  // Canal à parte (não entra na fila acima): obrigatório para perigosos/eletrônicos.
+  logistica:  { name: 'Devolver',   icon: '↩️', color: '#e8761b', credits: 4, eco: 5, tip: 'Logística reversa: volta ao fabricante para descarte seguro, sem contaminar o solo.' },
 };
 
 // Cada item: cor correta (separação) + destino ideal e as opções de roteamento.
@@ -671,6 +678,10 @@ const ITEMS = [
   { id: 'greasy',     name: 'Papel engordurado',correct: 'cinza',    svg: greasyPaperSVG(),tip: 'Papel sujo de gordura/comida NÃO recicla — é rejeito (lata cinza).', destino: 'incinerar',  options: ['incinerar', 'aterro'], dubio: true,
     inspect: 'Parece papel, mas gordura contamina a reciclagem — vai no rejeito!' },
   { id: 'sponge',     name: 'Esponja usada',    correct: 'cinza',    svg: spongeSVG(),     tip: 'Esponja usada é rejeito: lata cinza. Não recicla — sobra incinerar ou aterro.', destino: 'incinerar', options: ['incinerar', 'aterro'] },
+  { id: 'battery',    name: 'Pilha',            correct: 'laranja',  svg: batterySVG(),    tip: 'Pilhas e baterias são PERIGOSAS: lixeira laranja, nunca no lixo comum (contaminam o solo).', destino: 'logistica', options: ['logistica', 'aterro'], dubio: true,
+    inspect: 'Parece metal, mas pilha é PERIGOSA — vai na laranja, não na amarela!' },
+  { id: 'spray',      name: 'Aerossol',         correct: 'laranja',  svg: sprayCanSVG(),   tip: 'Aerossóis/solventes são perigosos: lixeira laranja (podem explodir e contaminar).', destino: 'logistica', options: ['logistica', 'aterro'], dubio: true,
+    inspect: 'Parece lata de metal, mas é perigoso — vai na laranja!' },
 ];
 
 /* ============================================================
@@ -743,7 +754,7 @@ function binSVG(color, dark, symbol) {
     <path d="M 55 60 L 60 188" stroke="${dark}" stroke-width="2.5" opacity="0.45" fill="none" stroke-linecap="round"/>
     <path d="M 80 60 L 80 188" stroke="${dark}" stroke-width="2.5" opacity="0.45" fill="none" stroke-linecap="round"/>
     <path d="M 105 60 L 100 188" stroke="${dark}" stroke-width="2.5" opacity="0.45" fill="none" stroke-linecap="round"/>
-    <!-- center symbol: recycle (default) or trash (rejeito) -->
+    <!-- center symbol: recycle (default), trash (rejeito) or hazard (perigoso) -->
     <circle cx="80" cy="115" r="22" fill="#fff" stroke="var(--ink)" stroke-width="3"/>
     ${symbol === 'rejeito' ? `
     <g transform="translate(80 115)" stroke="${dark}" stroke-width="2.5" fill="${color}" stroke-linejoin="round">
@@ -753,6 +764,11 @@ function binSVG(color, dark, symbol) {
       <line x1="-6" y1="-1" x2="-6" y2="11" stroke-linecap="round"/>
       <line x1="0" y1="-1" x2="0" y2="11" stroke-linecap="round"/>
       <line x1="6" y1="-1" x2="6" y2="11" stroke-linecap="round"/>
+    </g>` : symbol === 'perigoso' ? `
+    <g transform="translate(80 115)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round">
+      <path d="M 0 -16 L 17 13 L -17 13 Z" fill="#f5d000"/>
+      <rect x="-2.4" y="-7" width="4.8" height="12" rx="2" fill="var(--ink)" stroke="none"/>
+      <circle cx="0" cy="9" r="2.6" fill="var(--ink)" stroke="none"/>
     </g>` : `
     <g transform="translate(80 115)" stroke="${dark}" stroke-width="2.5" fill="${color}" stroke-linejoin="round">
       <path d="M -10 -2 L -4 -11 L 2 -11 L -1 -16 L -12 -16 L -16 -8 Z"/>
@@ -975,6 +991,42 @@ function spongeSVG() {
     <circle cx="86" cy="78" r="3" fill="#e8c63c"/>
     <circle cx="44" cy="62" r="2.4" fill="#e8c63c"/>
     <circle cx="78" cy="60" r="2.4" fill="#e8c63c"/>
+  </svg>`;
+}
+
+function batterySVG() {
+  return `
+  <svg viewBox="0 0 120 120" width="100%" height="100%">
+    <!-- positive terminal -->
+    <rect x="50" y="12" width="20" height="10" rx="2" fill="#cfcfcf" stroke="var(--ink)" stroke-width="3"/>
+    <!-- body -->
+    <rect x="38" y="20" width="44" height="86" rx="6" fill="#2e7d32" stroke="var(--ink)" stroke-width="3"/>
+    <!-- top band -->
+    <path d="M 38 26 Q 38 20 44 20 L 76 20 Q 82 20 82 26 L 82 40 L 38 40 Z" fill="#f0b315" stroke="var(--ink)" stroke-width="3" stroke-linejoin="round"/>
+    <text x="60" y="35" text-anchor="middle" font-family="Nunito" font-weight="900" font-size="13" fill="var(--ink)">+</text>
+    <!-- lightning bolt -->
+    <path d="M 64 50 L 50 74 L 59 74 L 53 94 L 73 66 L 62 66 Z" fill="#ffe14d" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/>
+    <!-- minus at bottom -->
+    <rect x="52" y="98" width="16" height="4" rx="2" fill="#fff"/>
+  </svg>`;
+}
+
+function sprayCanSVG() {
+  return `
+  <svg viewBox="0 0 120 120" width="100%" height="100%">
+    <!-- nozzle -->
+    <rect x="52" y="10" width="16" height="8" rx="2" fill="#444" stroke="var(--ink)" stroke-width="2.5"/>
+    <!-- collar -->
+    <rect x="46" y="16" width="28" height="10" rx="3" fill="#bdbdbd" stroke="var(--ink)" stroke-width="2.5"/>
+    <!-- body -->
+    <rect x="42" y="24" width="36" height="84" rx="8" fill="#e8761b" stroke="var(--ink)" stroke-width="3"/>
+    <!-- hazard label -->
+    <rect x="48" y="50" width="24" height="30" rx="3" fill="#fff" stroke="var(--ink)" stroke-width="2"/>
+    <path d="M 60 56 L 68 72 L 52 72 Z" fill="none" stroke="#d23636" stroke-width="2.5" stroke-linejoin="round"/>
+    <rect x="58.8" y="62" width="2.4" height="6" rx="1" fill="#d23636"/>
+    <circle cx="60" cy="70" r="1.4" fill="#d23636"/>
+    <!-- shine -->
+    <rect x="46" y="30" width="4" height="70" rx="2" fill="#fff" opacity="0.4"/>
   </svg>`;
 }
 
