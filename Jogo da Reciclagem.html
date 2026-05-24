@@ -77,6 +77,48 @@
   .hearts { letter-spacing: 2px; font-size: 18px; }
   .hearts span.lost { filter: grayscale(1) opacity(0.35); }
 
+  /* ===== Sector progress ===== */
+  .setor {
+    position: absolute;
+    top: 78px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9;
+    width: clamp(220px, 40vw, 320px);
+    font-family: 'Nunito', sans-serif;
+    background: #fff;
+    border: 3px solid var(--ink);
+    border-radius: 12px;
+    padding: 7px 12px 9px;
+    box-shadow: 0 4px 0 var(--ink);
+  }
+  .setor-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px;
+    font-weight: 800;
+    font-size: 13px;
+    color: var(--ink);
+    margin-bottom: 5px;
+  }
+  .setor-head .nm { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .setor-head .ct { color: var(--ink-soft); font-weight: 900; flex: none; }
+  .setor-track {
+    height: 12px;
+    background: #e7e0cf;
+    border: 2px solid var(--ink);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .setor-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--verde), #7ed36a);
+    border-radius: 999px;
+    transition: width 0.4s ease;
+  }
+
   .title-card {
     position: absolute;
     top: 22px;
@@ -617,6 +659,11 @@
     <div class="chip lives"><span class="icon">❤️</span><span class="hearts" id="hearts">❤️❤️❤️</span></div>
   </div>
 
+  <div class="setor" id="setor">
+    <div class="setor-head"><span class="nm" id="setorName">Setor 1</span><span class="ct" id="setorCount">0/6</span></div>
+    <div class="setor-track"><div class="setor-fill" id="setorFill"></div></div>
+  </div>
+
   <button class="restart" id="restart">↻ Reiniciar</button>
 
   <div class="ground"></div>
@@ -664,6 +711,16 @@ const DESTINOS = {
   // Canal à parte (não entra na fila acima): obrigatório para perigosos/eletrônicos.
   logistica:  { name: 'Devolver',   icon: '↩️', color: '#e8761b', credits: 4, eco: 5, tip: 'Logística reversa: volta ao fabricante para descarte seguro, sem contaminar o solo.' },
 };
+
+// Setores (fases): cada um tem uma meta de "limpeza" = nº de itens processados.
+// Dados separados do código para ajuste rápido e port futuro (Unity/JSON).
+const SETORES = [
+  { nome: 'Pracinha',         meta: 6 },
+  { nome: 'Rua do Bairro',    meta: 8 },
+  { nome: 'Praça Central',    meta: 10 },
+  { nome: 'Beira-Rio',        meta: 12 },
+  { nome: 'Parque da Cidade', meta: 14 },
+];
 
 // Cada item: cor correta (separação) + destino ideal e as opções de roteamento.
 // A 1ª opção da lista é sempre o destino ideal; as demais são "armadilhas" que ensinam.
@@ -1047,6 +1104,9 @@ const $restart = document.getElementById('restart');
 const $destPanel = document.getElementById('destPanel');
 const $destTitle = document.getElementById('destTitle');
 const $destOptions = document.getElementById('destOptions');
+const $setorName = document.getElementById('setorName');
+const $setorCount = document.getElementById('setorCount');
+const $setorFill = document.getElementById('setorFill');
 
 let state = {
   score: 0,
@@ -1058,6 +1118,9 @@ let state = {
   highScore: 0,
   runCredits: 0,
   runEco: 0,
+  setorIndex: 0,
+  setorProgress: 0,
+  bestSetor: 0,
   stats: {},
   current: null,
   queue: [],
@@ -1077,6 +1140,7 @@ function loadSave() {
   state.credits   = data.credits   || 0;
   state.ecoPoints = data.ecoPoints || 0;
   state.highScore = data.highScore || 0;
+  state.bestSetor = data.bestSetor || 0;
   state.stats     = data.stats     || {};
 }
 function persist() {
@@ -1085,9 +1149,23 @@ function persist() {
       credits: state.credits,
       ecoPoints: state.ecoPoints,
       highScore: state.highScore,
+      bestSetor: state.bestSetor,
       stats: state.stats,
     }));
   } catch (e) {}
+}
+
+function getSetor(i) {
+  if (i < SETORES.length) return SETORES[i];
+  const last = SETORES[SETORES.length - 1];
+  return { nome: 'Setor ' + (i + 1), meta: last.meta + (i - SETORES.length + 1) * 2 };
+}
+
+function updateSetorBar() {
+  const s = getSetor(state.setorIndex);
+  $setorName.textContent = `Setor ${state.setorIndex + 1}: ${s.nome}`;
+  $setorCount.textContent = `${state.setorProgress}/${s.meta}`;
+  $setorFill.style.width = Math.min(100, (state.setorProgress / s.meta) * 100) + '%';
 }
 function recordResult(catId, ok) {
   if (!state.stats[catId]) state.stats[catId] = { ok: 0, err: 0 };
@@ -1360,7 +1438,46 @@ function resolveRouting(destId, item, binEl) {
   }
   showPoints(binEl, '+' + credits + ' ♻️');
 
-  setTimeout(nextItem, optimal ? 1150 : 1550);
+  // Progresso do setor: o item foi processado (limpo).
+  state.setorProgress += 1;
+  updateSetorBar();
+  const cleared = state.setorProgress >= getSetor(state.setorIndex).meta;
+  setTimeout(cleared ? completeSetor : nextItem, optimal ? 1150 : 1550);
+}
+
+function completeSetor() {
+  const done = getSetor(state.setorIndex);
+  const bonusC = 5 + state.setorIndex * 3;
+  const bonusE = 5 + state.setorIndex * 2;
+  state.credits += bonusC;
+  state.runCredits += bonusC;
+  state.ecoPoints += bonusE;
+  state.runEco += bonusE;
+  state.setorIndex += 1;
+  state.setorProgress = 0;
+  state.lives = 3;
+  state.bestSetor = Math.max(state.bestSetor, state.setorIndex);
+  persist();
+  setHUD();
+  updateSetorBar();
+
+  const next = getSetor(state.setorIndex);
+  const modal = document.createElement('div');
+  modal.className = 'modal';
+  modal.innerHTML = `
+    <div class="card">
+      <h2>Setor limpo! 🏞️</h2>
+      <div class="big-score">${done.nome}</div>
+      <p>O governo reformou a área e suas vidas foram restauradas! ❤️❤️❤️<br/>
+         Bônus: <b>+${bonusC} ♻️</b> · <b>+${bonusE} 🌱</b><br/>
+         Próximo: <b>Setor ${state.setorIndex + 1} — ${next.nome}</b></p>
+      <button id="nextSetor">CONTINUAR →</button>
+    </div>`;
+  $stage.appendChild(modal);
+  document.getElementById('nextSetor').onclick = () => {
+    modal.remove();
+    nextItem();
+  };
 }
 
 function showFeedback(word, sub, good) {
@@ -1434,6 +1551,7 @@ function gameOver() {
       <div class="big-score">${state.score}</div>
       <div class="stars">${stars}</div>
       <p>Recorde: <b>${state.highScore}</b> · Melhor sequência: <b>${state.best}</b><br/>
+         Setores limpos: <b>${state.setorIndex}</b> (recorde ${state.bestSetor})<br/>
          Créditos: <b>+${state.runCredits} ♻️</b> (total ${state.credits})<br/>
          EcoPontos: <b>+${state.runEco} 🌱</b> (total ${state.ecoPoints})</p>
       ${reportHTML()}
@@ -1453,12 +1571,15 @@ function resetGame() {
   state.best = 0;
   state.runCredits = 0;
   state.runEco = 0;
+  state.setorIndex = 0;
+  state.setorProgress = 0;
   state.phase = 'sorting';
   state.hintShown = true;
   $destPanel.classList.remove('show');
   $destPanel.setAttribute('aria-hidden', 'true');
   $itemWrap.style.opacity = '1';
   setHUD();
+  updateSetorBar();
   shuffleQueue();
   nextItem();
 }
@@ -1478,6 +1599,7 @@ renderBins();
 shuffleQueue();
 nextItem();
 setHUD();
+updateSetorBar();
 </script>
 </body>
 </html>
