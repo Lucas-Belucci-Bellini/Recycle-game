@@ -516,6 +516,85 @@
   .restart:hover { transform: translateY(-2px); }
   .restart:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--ink); }
 
+  .shopbtn {
+    position: absolute;
+    top: 72px;
+    right: 28px;
+    z-index: 10;
+    background: #fff3a0;
+    border: 3px solid var(--ink);
+    border-radius: 12px;
+    padding: 10px 16px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    box-shadow: 0 4px 0 var(--ink);
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--ink);
+    transition: transform 0.1s;
+  }
+  .shopbtn:hover { transform: translateY(-2px); }
+  .shopbtn:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--ink); }
+
+  /* ===== Shop ===== */
+  .card.shop { max-width: 480px; }
+  .shop-credits {
+    font-weight: 800;
+    background: #d6f5d0;
+    border: 2px solid var(--ink);
+    border-radius: 10px;
+    padding: 6px 12px;
+    display: inline-block;
+    margin-bottom: 14px;
+  }
+  .shop-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 18px; }
+  .shop-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #f7f3e8;
+    border: 2px solid var(--ink);
+    border-radius: 14px;
+    padding: 10px 12px;
+    text-align: left;
+  }
+  .shop-ico { font-size: 30px; flex: none; width: 38px; text-align: center; }
+  .shop-info { flex: 1; min-width: 0; }
+  .shop-name { font-weight: 900; font-size: 15px; }
+  .shop-name small { font-weight: 700; color: var(--ink-soft); font-size: 12px; }
+  .shop-desc { font-size: 13px; color: var(--ink-soft); font-weight: 600; }
+  .shop-buy {
+    flex: none;
+    background: var(--verde);
+    color: #fff;
+    border: 2px solid var(--ink);
+    border-radius: 10px;
+    padding: 9px 12px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 900;
+    font-size: 14px;
+    box-shadow: 0 3px 0 var(--ink);
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .shop-buy:hover:not(:disabled) { transform: translateY(-2px); }
+  .shop-buy:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 1px 0 var(--ink); }
+  .shop-buy:disabled { background: #c7c1b2; cursor: not-allowed; box-shadow: 0 3px 0 #9a9484; }
+  .shop-maxed { flex: none; font-weight: 900; color: var(--verde); font-size: 18px; padding: 0 8px; }
+
+  .dest-btn.best { outline: 3px solid #ffcf33; outline-offset: 2px; }
+  .dest-btn .best-tag {
+    position: absolute;
+    top: -10px;
+    background: #ffcf33;
+    border: 2px solid var(--ink);
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 900;
+    padding: 1px 7px;
+  }
+  .dest-btn { position: relative; }
+
   /* Game over modal */
   .modal {
     position: absolute;
@@ -665,6 +744,7 @@
   </div>
 
   <button class="restart" id="restart">↻ Reiniciar</button>
+  <button class="shopbtn" id="shopBtn">🛒 Loja</button>
 
   <div class="ground"></div>
 
@@ -720,6 +800,15 @@ const SETORES = [
   { nome: 'Praça Central',    meta: 10 },
   { nome: 'Beira-Rio',        meta: 12 },
   { nome: 'Parque da Cidade', meta: 14 },
+];
+
+// Upgrades da loja: melhorias PERMANENTES (persistem entre partidas) com efeito
+// real no jogo. Custo do próximo nível = baseCost * scale^(nível atual).
+const UPGRADES = [
+  { id: 'vida',    nome: 'Coração extra',      icon: '❤️', desc: 'Começa cada partida com +1 vida.',        baseCost: 30, scale: 2.0, max: 2 },
+  { id: 'credito', nome: 'Luvas turbo',        icon: '💰', desc: '+1 crédito por item processado.',         baseCost: 20, scale: 1.8, max: 5 },
+  { id: 'eco',     nome: 'Selo verde',         icon: '🌱', desc: '+1 EcoPonto por destino realmente verde.', baseCost: 25, scale: 1.8, max: 5 },
+  { id: 'dica',    nome: 'Óculos de inspeção', icon: '🔍', desc: 'Marca o melhor destino no painel.',        baseCost: 40, scale: 1.0, max: 1 },
 ];
 
 // Cada item: cor correta (separação) + destino ideal e as opções de roteamento.
@@ -1107,12 +1196,15 @@ const $destOptions = document.getElementById('destOptions');
 const $setorName = document.getElementById('setorName');
 const $setorCount = document.getElementById('setorCount');
 const $setorFill = document.getElementById('setorFill');
+const $shopBtn = document.getElementById('shopBtn');
 
 let state = {
   score: 0,
   streak: 0,
   best: 0,
   lives: 3,
+  maxLives: 3,
+  upgrades: {},
   credits: 0,
   ecoPoints: 0,
   highScore: 0,
@@ -1141,7 +1233,9 @@ function loadSave() {
   state.ecoPoints = data.ecoPoints || 0;
   state.highScore = data.highScore || 0;
   state.bestSetor = data.bestSetor || 0;
+  state.upgrades  = data.upgrades  || {};
   state.stats     = data.stats     || {};
+  state.maxLives  = 3 + upgLevel('vida');
 }
 function persist() {
   try {
@@ -1150,10 +1244,14 @@ function persist() {
       ecoPoints: state.ecoPoints,
       highScore: state.highScore,
       bestSetor: state.bestSetor,
+      upgrades: state.upgrades,
       stats: state.stats,
     }));
   } catch (e) {}
 }
+
+function upgLevel(id) { return state.upgrades[id] || 0; }
+function upgCost(u) { return Math.round(u.baseCost * Math.pow(u.scale, upgLevel(u.id))); }
 
 function getSetor(i) {
   if (i < SETORES.length) return SETORES[i];
@@ -1230,7 +1328,7 @@ function setHUD() {
   $eco.textContent = state.ecoPoints;
   $streak.textContent = state.streak;
   let hearts = '';
-  for (let i = 0; i < 3; i++) {
+  for (let i = 0; i < state.maxLives; i++) {
     hearts += `<span class="${i < state.lives ? '' : 'lost'}">❤️</span>`;
   }
   $hearts.innerHTML = hearts;
@@ -1405,6 +1503,10 @@ function renderDestOptions(item, binEl) {
     btn.className = 'dest-btn';
     btn.style.setProperty('--accent', d.color);
     btn.innerHTML = `<span class="dico">${d.icon}</span><span class="dname">${d.name}</span>`;
+    if (upgLevel('dica') > 0 && id === item.destino) {
+      btn.classList.add('best');
+      btn.innerHTML += '<span class="best-tag">★ melhor</span>';
+    }
     btn.addEventListener('click', () => resolveRouting(id, item, binEl));
     $destOptions.appendChild(btn);
   });
@@ -1419,8 +1521,9 @@ function resolveRouting(destId, item, binEl) {
   const dest = DESTINOS[destId];
   const best = DESTINOS[item.destino];
   const optimal = destId === item.destino;
-  const credits = dest.credits + Math.floor(state.streak / 3);
-  const eco = dest.eco;
+  const credits = dest.credits + Math.floor(state.streak / 3) + upgLevel('credito');
+  // Selo verde só turbina destinos realmente verdes — incinerar/aterro seguem em 0.
+  const eco = dest.eco > 0 ? dest.eco + upgLevel('eco') : 0;
 
   state.credits += credits;
   state.runCredits += credits;
@@ -1455,7 +1558,7 @@ function completeSetor() {
   state.runEco += bonusE;
   state.setorIndex += 1;
   state.setorProgress = 0;
-  state.lives = 3;
+  state.lives = state.maxLives;
   state.bestSetor = Math.max(state.bestSetor, state.setorIndex);
   persist();
   setHUD();
@@ -1567,7 +1670,8 @@ function gameOver() {
 function resetGame() {
   state.score = 0;
   state.streak = 0;
-  state.lives = 3;
+  state.maxLives = 3 + upgLevel('vida');
+  state.lives = state.maxLives;
   state.best = 0;
   state.runCredits = 0;
   state.runEco = 0;
@@ -1584,6 +1688,69 @@ function resetGame() {
   nextItem();
 }
 
+/* ===== Loja ===== */
+function openShop() {
+  if (document.getElementById('shopModal')) return;
+  const modal = document.createElement('div');
+  modal.className = 'modal';
+  modal.id = 'shopModal';
+  modal.innerHTML = `
+    <div class="card shop">
+      <h2>🛒 Loja</h2>
+      <div class="shop-credits" id="shopCredits">Você tem <b>${state.credits} ♻️</b></div>
+      <div class="shop-list" id="shopList"></div>
+      <button id="shopClose">FECHAR</button>
+    </div>`;
+  $stage.appendChild(modal);
+  renderShopList();
+  document.getElementById('shopClose').onclick = () => modal.remove();
+}
+
+function renderShopList() {
+  const list = document.getElementById('shopList');
+  if (!list) return;
+  list.innerHTML = UPGRADES.map(u => {
+    const lvl = upgLevel(u.id);
+    const maxed = lvl >= u.max;
+    const cost = upgCost(u);
+    const can = !maxed && state.credits >= cost;
+    const lvlText = u.max > 1 ? `Nível ${lvl}/${u.max}` : (lvl ? 'Adquirido' : '');
+    const action = maxed
+      ? `<span class="shop-maxed">${u.max > 1 ? 'MÁX' : '✓'}</span>`
+      : `<button class="shop-buy" data-id="${u.id}" ${can ? '' : 'disabled'}>${cost} ♻️</button>`;
+    return `<div class="shop-item">
+      <div class="shop-ico">${u.icon}</div>
+      <div class="shop-info">
+        <div class="shop-name">${u.nome} <small>${lvlText}</small></div>
+        <div class="shop-desc">${u.desc}</div>
+      </div>
+      ${action}
+    </div>`;
+  }).join('');
+  list.querySelectorAll('.shop-buy').forEach(b => {
+    b.onclick = () => buyUpgrade(b.dataset.id);
+  });
+}
+
+function buyUpgrade(id) {
+  const u = UPGRADES.find(x => x.id === id);
+  const lvl = upgLevel(id);
+  if (!u || lvl >= u.max) return;
+  const cost = upgCost(u);
+  if (state.credits < cost) return;
+  state.credits -= cost;
+  state.upgrades[id] = lvl + 1;
+  if (id === 'vida') {
+    state.maxLives = 3 + state.upgrades.vida;
+    state.lives = Math.min(state.maxLives, state.lives + 1);
+  }
+  persist();
+  setHUD();
+  const cd = document.getElementById('shopCredits');
+  if (cd) cd.innerHTML = `Você tem <b>${state.credits} ♻️</b>`;
+  renderShopList();
+}
+
 /* ===== Listeners ===== */
 $item.addEventListener('mousedown', pointerDown);
 $item.addEventListener('touchstart', pointerDown, { passive: false });
@@ -1592,9 +1759,11 @@ window.addEventListener('touchmove', pointerMove, { passive: false });
 window.addEventListener('mouseup', pointerUp);
 window.addEventListener('touchend', pointerUp);
 $restart.addEventListener('click', resetGame);
+$shopBtn.addEventListener('click', openShop);
 
 /* ===== Init ===== */
 loadSave();
+state.lives = state.maxLives;
 renderBins();
 shuffleQueue();
 nextItem();
