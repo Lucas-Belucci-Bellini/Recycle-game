@@ -26,6 +26,8 @@
     --amarelo-d: #b8830a;
     --marrom: #6a4326;
     --marrom-d: #4a2d18;
+    --cinza: #8a8f96;
+    --cinza-d: #5b6168;
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; height: 100%; }
@@ -210,13 +212,13 @@
     display: flex;
     justify-content: center;
     align-items: flex-end;
-    gap: clamp(12px, 2.2vw, 36px);
-    padding: 0 24px;
+    gap: clamp(8px, 2.2vw, 36px);
+    padding: 0 16px;
     z-index: 3;
   }
   .bin {
     position: relative;
-    width: clamp(110px, 13vw, 170px);
+    width: clamp(86px, 13vw, 170px);
     cursor: default;
     transition: transform 0.18s ease;
   }
@@ -642,6 +644,7 @@ const BINS = [
   { id: 'verde',    name: 'Vidro',     ptColor: 'VERDE',    color: 'var(--verde)',    dark: 'var(--verde-d)' },
   { id: 'amarelo',  name: 'Metal',     ptColor: 'AMARELA',  color: 'var(--amarelo)',  dark: 'var(--amarelo-d)' },
   { id: 'marrom',   name: 'Orgânico',  ptColor: 'MARROM',   color: 'var(--marrom)',   dark: 'var(--marrom-d)' },
+  { id: 'cinza',    name: 'Rejeito',   ptColor: 'CINZA',    color: 'var(--cinza)',    dark: 'var(--cinza-d)',   symbol: 'rejeito' },
 ];
 
 // Destinos, ordenados pela hierarquia do lixo (D-04): reutilizar > reciclar/compostar > incinerar > aterro.
@@ -665,6 +668,9 @@ const ITEMS = [
   { id: 'banana',     name: 'Casca de banana',  correct: 'marrom',   svg: bananaSVG(),     tip: 'Restos de comida são orgânicos: lixeira marrom (viram adubo!).',   destino: 'compostar',  options: ['compostar', 'aterro', 'incinerar'] },
   { id: 'newspaper',  name: 'Jornal',           correct: 'azul',     svg: newspaperSVG(),  tip: 'Jornal é papel: lixeira azul.',                                    destino: 'reciclar',   options: ['reciclar', 'incinerar'] },
   { id: 'cup',        name: 'Copo plástico',    correct: 'vermelho', svg: cupSVG(),        tip: 'Copos plásticos vão na lixeira vermelha.',                         destino: 'reciclar',   options: ['reciclar', 'aterro'] },
+  { id: 'greasy',     name: 'Papel engordurado',correct: 'cinza',    svg: greasyPaperSVG(),tip: 'Papel sujo de gordura/comida NÃO recicla — é rejeito (lata cinza).', destino: 'incinerar',  options: ['incinerar', 'aterro'], dubio: true,
+    inspect: 'Parece papel, mas gordura contamina a reciclagem — vai no rejeito!' },
+  { id: 'sponge',     name: 'Esponja usada',    correct: 'cinza',    svg: spongeSVG(),     tip: 'Esponja usada é rejeito: lata cinza. Não recicla — sobra incinerar ou aterro.', destino: 'incinerar', options: ['incinerar', 'aterro'] },
 ];
 
 /* ============================================================
@@ -722,7 +728,7 @@ function basketballSVG() {
   </svg>`;
 }
 
-function binSVG(color, dark) {
+function binSVG(color, dark, symbol) {
   return `
   <svg viewBox="0 0 160 200" width="100%" height="auto" style="overflow: visible">
     <!-- shadow -->
@@ -737,13 +743,22 @@ function binSVG(color, dark) {
     <path d="M 55 60 L 60 188" stroke="${dark}" stroke-width="2.5" opacity="0.45" fill="none" stroke-linecap="round"/>
     <path d="M 80 60 L 80 188" stroke="${dark}" stroke-width="2.5" opacity="0.45" fill="none" stroke-linecap="round"/>
     <path d="M 105 60 L 100 188" stroke="${dark}" stroke-width="2.5" opacity="0.45" fill="none" stroke-linecap="round"/>
-    <!-- recycle symbol white circle -->
+    <!-- center symbol: recycle (default) or trash (rejeito) -->
     <circle cx="80" cy="115" r="22" fill="#fff" stroke="var(--ink)" stroke-width="3"/>
+    ${symbol === 'rejeito' ? `
+    <g transform="translate(80 115)" stroke="${dark}" stroke-width="2.5" fill="${color}" stroke-linejoin="round">
+      <rect x="-13" y="-6" width="26" height="22" rx="3"/>
+      <rect x="-16" y="-11" width="32" height="6" rx="2"/>
+      <rect x="-5" y="-16" width="10" height="5" rx="2"/>
+      <line x1="-6" y1="-1" x2="-6" y2="11" stroke-linecap="round"/>
+      <line x1="0" y1="-1" x2="0" y2="11" stroke-linecap="round"/>
+      <line x1="6" y1="-1" x2="6" y2="11" stroke-linecap="round"/>
+    </g>` : `
     <g transform="translate(80 115)" stroke="${dark}" stroke-width="2.5" fill="${color}" stroke-linejoin="round">
       <path d="M -10 -2 L -4 -11 L 2 -11 L -1 -16 L -12 -16 L -16 -8 Z"/>
       <path d="M 1 -10 L 11 -6 L 13 0 L 18 -3 L 16 -13 L 7 -16 Z"/>
       <path d="M 10 4 L 4 13 L -2 13 L 1 18 L 12 18 L 16 10 Z"/>
-    </g>
+    </g>`}
     <!-- rim -->
     <rect x="22" y="42" width="116" height="16" rx="4" fill="${dark}" stroke="var(--ink)" stroke-width="4"/>
     <!-- lid -->
@@ -920,6 +935,49 @@ function cupSVG() {
   </svg>`;
 }
 
+function greasyPaperSVG() {
+  return `
+  <svg viewBox="0 0 120 120" width="100%" height="100%">
+    <!-- napkin sheet -->
+    <path d="M 24 30 L 92 22 L 100 92 L 32 102 Z"
+          fill="#fbf3df" stroke="var(--ink)" stroke-width="3" stroke-linejoin="round"/>
+    <!-- crease folds -->
+    <path d="M 40 26 L 48 98" fill="none" stroke="var(--ink-soft)" stroke-width="1.5" opacity="0.5"/>
+    <path d="M 64 24 L 70 96" fill="none" stroke="var(--ink-soft)" stroke-width="1.5" opacity="0.5"/>
+    <path d="M 28 56 L 97 49" fill="none" stroke="var(--ink-soft)" stroke-width="1.5" opacity="0.5"/>
+    <!-- grease stains (translucent) -->
+    <ellipse cx="54" cy="52" rx="18" ry="14" fill="#b5872e" opacity="0.32"/>
+    <ellipse cx="74" cy="74" rx="12" ry="10" fill="#9c6b1f" opacity="0.30"/>
+    <ellipse cx="40" cy="80" rx="9" ry="7" fill="#b5872e" opacity="0.28"/>
+    <!-- crumbs -->
+    <circle cx="60" cy="48" r="2" fill="#6b4d12" opacity="0.6"/>
+    <circle cx="70" cy="70" r="1.8" fill="#6b4d12" opacity="0.6"/>
+  </svg>`;
+}
+
+function spongeSVG() {
+  return `
+  <svg viewBox="0 0 120 120" width="100%" height="100%">
+    <!-- yellow foam body -->
+    <rect x="18" y="48" width="84" height="44" rx="12" fill="#ffe14d" stroke="var(--ink)" stroke-width="3"/>
+    <!-- green scrub top -->
+    <path d="M 18 56 Q 18 40 30 38 L 90 32 Q 102 32 102 46 L 102 56 Z"
+          fill="#3fae5a" stroke="var(--ink)" stroke-width="3" stroke-linejoin="round"/>
+    <!-- scrub speckles -->
+    <circle cx="34" cy="46" r="2" fill="#2b7d40"/>
+    <circle cx="50" cy="42" r="2" fill="#2b7d40"/>
+    <circle cx="66" cy="45" r="2" fill="#2b7d40"/>
+    <circle cx="82" cy="42" r="2" fill="#2b7d40"/>
+    <!-- foam pores -->
+    <circle cx="34" cy="70" r="3" fill="#e8c63c"/>
+    <circle cx="52" cy="78" r="3" fill="#e8c63c"/>
+    <circle cx="70" cy="68" r="3" fill="#e8c63c"/>
+    <circle cx="86" cy="78" r="3" fill="#e8c63c"/>
+    <circle cx="44" cy="62" r="2.4" fill="#e8c63c"/>
+    <circle cx="78" cy="60" r="2.4" fill="#e8c63c"/>
+  </svg>`;
+}
+
 /* ============================================================
    Game logic
    ============================================================ */
@@ -996,7 +1054,7 @@ function renderBins() {
     el.dataset.id = b.id;
     el.innerHTML = `
       <div class="hoop">${hoopSVG()}</div>
-      ${binSVG(b.color, b.dark)}
+      ${binSVG(b.color, b.dark, b.symbol)}
       <div class="label">${b.name}<span class="pt">LATA ${b.ptColor}</span></div>
     `;
     $bins.appendChild(el);
@@ -1024,10 +1082,15 @@ function nextItem() {
   state.itemX = 0; state.itemY = 0;
   setTimeout(() => { $itemWrap.style.transition = ''; }, 460);
 
-  // update hint
-  if (state.hintShown) {
+  // Dica / inspeção — itens dúbios sempre avisam (enganam de propósito)
+  if (state.current.dubio) {
+    $hint.style.display = 'block';
+    $hint.childNodes[0].nodeValue = `🔍 ${state.current.inspect || 'Olhe bem antes de jogar!'} `;
+  } else if (state.hintShown) {
     $hint.style.display = 'block';
     $hint.childNodes[0].nodeValue = `Onde joga ${state.current.name.toLowerCase()}? `;
+  } else {
+    $hint.style.display = 'none';
   }
 }
 
