@@ -1,19 +1,32 @@
 # 10 — Plano Técnico e Arquitetura
 
-## Stack atual
+## Stack atual (protótipo de mecânica, 2D)
 - **HTML5 + CSS + JavaScript puro**, arquivo único (`Jogo da Reciclagem.html`).
 - Sem build, sem dependências (só fontes do Google).
 - Vantagem enorme para escola: **abre em qualquer navegador, sem instalar nada**.
+- É um **protótipo** para validar a diversão/conteúdo de forma barata — a
+  produção final será 3D (ver D-03 abaixo).
 
-## Recomendação de evolução — D-03
-Manter **Web puro** enquanto o escopo couber. Só migrar para engine
-(Phaser/Godot/Unity) se a complexidade exigir. Caminho sugerido:
+## Decisão D-03 (decidida): jogo final em 3D na Unity, com protótipo web 2D
+O jogo **final será 3D, feito na Unity**. O build web atual
+(`Jogo da Reciclagem.html`) é um **protótipo de mecânica em 2D**: serve para
+validar gameplay e conteúdo educativo antes de investir em arte/3D.
 
-1. **Curto prazo**: separar o HTML único em `index.html` + `css/` + `js/`
-   (módulos) para facilitar manutenção.
-2. **Médio prazo**: se a UI crescer muito, avaliar **Phaser** (web, 2D, JS/TS).
-3. **Longo prazo / mobile nativo**: avaliar **Godot 4** ou **Unity** (2D
-   isométrico para baixar custo).
+- **Agora (protótipo 2D web)**: iterar mecânica, categorias, destinos,
+  hierarquia (D-04), economia e conteúdo educativo. Roda no navegador, sem
+  instalar — ótimo para testar em sala. **Design e dados são independentes de
+  engine.**
+- **Depois (produção 3D, Unity)**: portar as regras/dados já validados;
+  resíduos, lixeiras, upgrades e balanceamento como dados (JSON /
+  ScriptableObjects). A camada visual 2D (SVG/CSS) é descartável; **a lógica e
+  o balanceamento, não**.
+- Sempre que possível, **exportar para web (WebGL)** para não perder a vantagem
+  de "abrir no navegador" nas escolas.
+
+> Substitui a sugestão antiga de "engine 2D isométrico". A migração para a Unity
+> acontece quando a mecânica estiver validada no protótipo. Implicação prática:
+> manter a lógica do protótipo **dirigida por dados** (tabelas de itens/lixeiras/
+> destinos separadas do código de render) para facilitar o port.
 
 ## Módulos de código (arquitetura MVP)
 - **ItemSystem** — tipo, peso, risco, valor, estado de contaminação.

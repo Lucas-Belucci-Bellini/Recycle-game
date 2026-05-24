@@ -11,8 +11,8 @@ vê-las misturadas é o gatilho de aprendizagem (ver [doc 08](08-conteudo-educat
 | 3 | Verde | Vidro | ✅ |
 | 4 | Amarelo | Metal | ✅ |
 | 5 | Marrom | Orgânico | ✅ |
-| 6 | Cinza | Rejeito (não reciclável) | planejado |
-| 7 | Laranja | Perigoso/químico | planejado |
+| 6 | Cinza | Rejeito (não reciclável) | ✅ |
+| 7 | Laranja | Perigoso/químico | ✅ |
 
 **Avançadas (desbloqueio posterior):** Preto → Eletrônico (e-lixo);
 Branco → Hospitalar/saúde; Caçamba → Entulho/construção.
