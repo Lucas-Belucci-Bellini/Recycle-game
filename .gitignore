@@ -1,0 +1,78 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.tmp
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Web / Node
+node_modules/
+dist/
+build/
+.cache/
+.parcel-cache/
+
+# Unity
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Uu]ser[Ss]ettings/
+[Mm]emoryCaptures/
+*.csproj
+*.sln
+*.user
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+
+# Unity generated / crash artifacts
+sysinfo.txt
+*.stackdump
+
+# Large archives and disk images
+*.zip
+*.7z
+*.rar
+*.tar
+*.tar.gz
+*.iso
+*.img
+
+# Proprietary/commercial game package formats - do not commit extracted game files
+*.pak
+*.ucas
+*.utoc
+*.sig
+*.dll
+*.exe
+*.bin
+*.dat
+*.sav
+
+# Local reference folders that must stay out of the repository
+Satisfactory*/
+*Satisfactory*/
+reference-games/
+third-party-proprietary/
+local-assets-only/
+
+# Optional Git LFS tracking should be configured intentionally, not by accident
+*.psd
+*.blend
+*.fbx
+*.wav
+*.mp4
