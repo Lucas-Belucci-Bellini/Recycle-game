@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<title>Jogo da Reciclagem</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div class="stage" id="stage">
+  <!-- Decorative sky -->
+  <div class="sun"></div>
+  <div class="clouds">
+    <div class="cloud c1"></div>
+    <div class="cloud c2"></div>
+    <div class="cloud c3"></div>
+  </div>
+
+  <!-- HUD -->
+  <div class="title-card">
+    <span class="kicker">BASQUETE DA RECICLAGEM 🏀</span>
+    <h1>Joga no Lugar Certo!</h1>
+    <div class="sub">Faça cesta na lixeira certa ♻️</div>
+  </div>
+
+  <div class="hud">
+    <div class="chip score"><span class="icon">🏀</span><span>Pontos: <b id="score">0</b></span></div>
+    <div class="chip streak"><span class="icon">🔥</span><span>Sequência: <b id="streak">0</b></span></div>
+    <div class="chip lives"><span class="icon">❤️</span><span class="hearts" id="hearts">❤️❤️❤️</span></div>
+    <div class="chip level"><span class="icon">🎯</span><span>Nível: <b id="level">1</b></span></div>
+    <div class="chip challenge"><span class="icon">🧩</span><span id="challengeText">Desafio: acerte 3 seguidas</span></div>
+    <div class="chip reward"><span class="icon">🏆</span><span>Recompensas: <b id="rewards">0</b></span></div>
+    <div class="chip checkpoint"><span class="icon">🚩</span><span>Checkpoint: <b id="checkpoint">0</b></span></div>
+  </div>
+
+  <button class="restart" id="restart">↻ Reiniciar</button>
+
+  <div class="ground"></div>
+
+  <!-- Bins -->
+  <div class="bins" id="bins"></div>
+
+  <!-- Item -->
+  <div class="hint" id="hint">Arraste para a lixeira certa!<span class="arrow"></span></div>
+  <div class="item-wrap" id="itemWrap">
+    <div class="item" id="item"></div>
+  </div>
+</div>
+
+<script src="game.js"></script>
+</body>
+</html>
