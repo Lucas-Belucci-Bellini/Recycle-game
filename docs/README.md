@@ -49,9 +49,11 @@ Pontos que dependem de você decidir (estão marcados como `D-0x` ao longo dos d
   *Operação Recicla+*. Decisão sua.
 - **D-02 — Escopo do MVP.** Ver [11 — Roadmap](11-roadmap-e-mds.md). Sugestão:
   4 categorias, 1 setor, loja simples e 1 robô/esteira.
-- **D-03 — Plataforma alvo. ✅ Decidido:** produção final em **3D na Unity**; o
-  build web atual (`Jogo da Reciclagem.html`) é **protótipo 2D** de mecânica.
-  Ver [10 — Técnico](10-tecnico-e-arquitetura.md).
+- **D-03 — Plataforma alvo. ✅ Decidido:** produção final em **3D na Unreal
+  Engine** (C++ + Blueprints); o build web atual (`Jogo da Reciclagem.html`)
+  segue como **protótipo 2D** de mecânica. Trade-off conhecido: abandona a
+  vantagem "abrir no navegador, sem instalar" — o jogo final será executável
+  nativo. Ver [10 — Técnico](10-tecnico-e-arquitetura.md).
 - **D-04 — Papel da incineração ("cremar").** Recomendação: incinerar é mecânica
   divertida, mas **paga menos** que reutilizar/reciclar (senão o jogo ensina o
   errado). Ver [03 — Hierarquia do lixo](03-residuos-e-categorias.md).
